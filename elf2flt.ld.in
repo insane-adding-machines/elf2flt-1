@@ -13,7 +13,6 @@ PHDRS {
 SECTIONS {
 
 	.text 0x0 : {
-		. = . + 4;
 		. = ALIGN(0x4) ;
 		@SYMBOL_PREFIX@_stext = . ;
 		*(.literal .text)
@@ -35,8 +34,6 @@ W_RODAT		*(.rodata1)
 W_RODAT		*(.rodata.*)
 W_RODAT		*(.gnu.linkonce.r*)
 
-		/* .ARM.extab name sections containing exception unwinding information */
-		*(.ARM.extab* .gnu.linkonce.armextab.*)
 		/* This is special code area at the end of the normal
 		   text section.  It contains a small lookup table at
 		   the start followed by the code pointed to by entries
@@ -50,10 +47,11 @@ W_RODAT		*(.gnu.linkonce.r*)
 	/* .ARM.exidx name sections containing index entries for section unwinding */
 	/* .ARM.exidx is sorted, so has to go in its own output section.  */
 	@SYMBOL_PREFIX@__exidx_start = .;
-	.ARM.exidx :
+    /DISCARD/ :
 	{
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-	} > flatmem
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+	}
 	@SYMBOL_PREFIX@__exidx_end = .;
 
 	. = ALIGN(0x20) ;
@@ -184,7 +182,7 @@ TOR:		@SYMBOL_PREFIX@__DTOR_END__ = .;
 	.stack : {
 		. = ALIGN(0x4);
 		@SYMBOL_PREFIX@_stack_start = .;
-	} > flatmem
+	}
 
 	.junk 0 : { *(.rel*) *(.rela*) }
 	/DISCARD/ : { *(.note.GNU-stack) }
